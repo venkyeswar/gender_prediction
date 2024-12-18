@@ -4,14 +4,16 @@ from django.shortcuts import render
 from .forms import ImageForm
 from .models import Image
 from tensorflow.keras.preprocessing import image as keras_image
+
 import os
+from keras.models import load_model
+from django.conf import settings
 
+# Load the model once when the module is imported
+model_path = os.path.join(settings.BASE_DIR, 'gender_prediction.h5')
+model = load_model(model_path)
 # Absolute path to the model file
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-model_path = os.path.join(BASE_DIR, 'gender_prediction.h5')
 
-# Load the model
-model = tf.keras.models.load_model(model_path)
 
 def predict_gender(img_path):
     # Load and preprocess the image
