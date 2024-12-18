@@ -3,23 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gender Classifier</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <title>Gender Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Gender Classifier</h1>
-        <form method="POST" enctype="multipart/form-data">
-            <input type="file" name="file" accept="image/*" required>
+        <h1>Gender Prediction</h1>
+
+        <form action="/" method="post" enctype="multipart/form-data">
+            <input type="file" name="pic" accept="image/*" required>
             <button type="submit">Upload and Predict</button>
         </form>
-        {% if uploaded_image %}
-            <div class="result">
-                <h3>Uploaded Image:</h3>
-                <img src="{{ uploaded_image }}" alt="Uploaded Image">
-                <h3>Prediction: {{ prediction }}</h3>
+
+        {% if image %}
+            <div class="result-container">
+                <h2>Prediction Result:</h2>
+                <img src="{{ url_for('serve_image', filename=image.filename) }}" alt="Uploaded Image">
+                <p>Prediction: {{ image.prediction }}</p>
             </div>
         {% endif %}
     </div>
+
+    <footer>
+        <p>© 2024 Gender Prediction | By Your Venky</p>
+    </footer>
 </body>
 </html>

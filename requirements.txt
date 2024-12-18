@@ -14,12 +14,14 @@ cycler
 Django
 et_xmlfile
 Flask
+Flask-SQLAlchemy
 flatbuffers
 fonttools
 gast
 gitdb
 GitPython
 google-pasta
+greenlet
 grpcio
 gunicorn
 h5py
@@ -67,6 +69,7 @@ scipy
 seaborn
 six
 smmap
+SQLAlchemy
 sqlparse
 streamlit
 tenacity

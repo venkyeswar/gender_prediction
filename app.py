@@ -1,66 +1,101 @@
-import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, Response
 from werkzeug.utils import secure_filename
+import os
+import numpy as np
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
-import numpy as np
+from db import db_init, db
+from models import Img
 
-# Initialize Flask App
 app = Flask(__name__)
 
-# Folder Configurations
-UPLOAD_FOLDER = 'static/uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+# Configure SQLite database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///img.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Directory to store uploaded images
+UPLOAD_FOLDER = os.path.join('static', 'uploads')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Ensure the folder exists
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Load the VGG16 model
-model = load_model('model/gender_prediction.h5')
+# File size limit for uploaded images (16 MB)
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB
 
-# Function to check file extension
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+# Initialize the database
+db_init(app)
 
-# Prediction function
-def predict_gender(image_path):
-    img = load_img(image_path, target_size=(224, 224))  # Resize image to match VGG16 input
-    img_array = img_to_array(img) / 255.0              # Normalize the image
-    img_array = np.expand_dims(img_array, axis=0)      # Add batch dimension
-    prediction = model.predict(img_array)
-    print(prediction)
+# Load the pre-trained VGG16 model
+MODEL_PATH = 'vgg16_model/gender_prediction.h5'
+model = load_model(MODEL_PATH)
+
+# Preprocessing function
+def preprocess_image(filepath):
+    """Preprocess the image for VGG16 model."""
+    img = load_img(filepath, target_size=(224, 224))  # Resize to match VGG16 input
+    img_array = img_to_array(img)
+    img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
+    img_array /= 255.0  # Normalize to [0, 1]
+    return img_array
+
+# Predict function
+def predict_gender(filepath):
+    """Predict gender using the pre-trained model."""
+    processed_img = preprocess_image(filepath)
+    prediction = model.predict(processed_img)
     prediction = np.argmax(prediction)
     labels=["Male","Female"]
-    prediction=labels[prediction]
+    prediction = labels[prediction]
     return prediction
+   
 
+# Route for image upload and prediction
 @app.route('/', methods=['GET', 'POST'])
-def index():
+def upload_image():
     if request.method == 'POST':
-        # Check if file is in the request
-        if 'file' not in request.files:
-            return redirect(request.url)
-        
-        file = request.files['file']
-        
-        # If no file is selected or the file is not allowed
-        if file.filename == '' or not allowed_file(file.filename):
-            return redirect(request.url)
-        
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)  # Save the file
-            
-            # Make a prediction
-            prediction = predict_gender(file_path)
-            return render_template('index.html', prediction=prediction, uploaded_image=file_path)
+        # Retrieve the uploaded image
+        pic = request.files.get('pic')
+        if not pic:
+            return 'No image uploaded!', 400
 
-    return render_template('index.html', prediction=None, uploaded_image=None)
-            
+        # Secure the filename
+        filename = secure_filename(pic.filename)
+        mimetype = pic.mimetype
+
+        # Validate filename and mimetype
+        if not filename or not mimetype:
+            return 'Invalid upload!', 400
+
+        # Save the file to the server
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        pic.save(filepath)
+
+        # Run the model for prediction
+        prediction = predict_gender(filepath)
+
+        # Save metadata and prediction in the database
+        img = Img(filename=filename, mimetype=mimetype, filepath=filepath, prediction=prediction)
+        db.session.add(img)
+        db.session.commit()
+
+        return redirect(url_for('view_result', img_id=img.id))
+
+    return render_template('index.html')
+
+# Route to view prediction result
+@app.route('/result/<int:img_id>')
+def view_result(img_id):
+    img = Img.query.filter_by(id=img_id).first()
+    if not img:
+        return 'Image not found!', 404
+
+    return render_template('index.html', image=img)
+
+# Route to serve the image file
+@app.route('/static/uploads/<filename>')
+def serve_image(filename):
+    return Response(open(os.path.join(app.config['UPLOAD_FOLDER'], filename), 'rb').read(), mimetype='image/jpeg')
 
 if __name__ == '__main__':
-    if not os.path.exists(UPLOAD_FOLDER):
-        os.makedirs(UPLOAD_FOLDER)
-    #app.run( )
+    # app.run(debug=True)
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
-
+    
