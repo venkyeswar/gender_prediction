@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gender Prediction</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Image for Gender Prediction</h1>
+        
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Upload Image">
+        </form>
+
+        {% if uploaded_image_url %}
+            <div class="image-container">
+                <h2>Uploaded Image:</h2>
+                <img src="{{ uploaded_image_url }}" alt="Uploaded Image">
+            </div>
+        {% endif %}
+
+        {% if gender %}
+            <div class="result">
+                <p>Predicted Gender: {{ gender }}</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        <p>Developed by Venky</p>
+    </footer>
+</body>
+</html>
