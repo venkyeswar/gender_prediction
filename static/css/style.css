@@ -1,0 +1,160 @@
+/* General Reset */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f5f5f5; /* Smoke white background */
+    margin: 0;
+    padding: 0;
+    color: #333; /* Dark text for readability */
+    height: 100vh; /* Full viewport height */
+    overflow: hidden; /* Prevent scrolling */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Main Container */
+.container {
+    max-width: 600px;
+    width: 90%; /* Responsive for smaller screens */
+    margin: auto;
+    background: #ffffff; /* White background for contrast */
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow for elevation */
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.container:hover {
+    transform: scale(1.02);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2); /* Hover effect for depth */
+}
+
+/* Header */
+h1 {
+    color: #444; /* Dark grey for the header */
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Form Section */
+form {
+    margin: 20px 0;
+    padding: 15px;
+    background: #fafafa; /* Light grey background */
+    border-radius: 10px;
+    border: 1px solid #e0e0e0; /* Subtle border */
+}
+
+input[type="file"] {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 2px solid #2575fc; /* Accent border color */
+    border-radius: 5px;
+    background: #ffffff;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+input[type="file"]:hover {
+    background: #2575fc;
+    color: #fff;
+    border-color: #333;
+}
+
+/* Submit Button */
+button {
+    background: #ff5722; /* Bright orange for contrast */
+    color: #fff;
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 50px; /* Rounded button */
+    font-size: 1rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Button shadow */
+}
+
+button:hover {
+    background: #e64a19; /* Darker orange on hover */
+    transform: translateY(-3px); /* Lift effect */
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Result Section */
+.result img {
+    width: 15rem; /* Fixed width */
+    height: 15rem; /* Fixed height */
+    margin-top: 15px;
+    border-radius: 10px;
+    object-fit: cover; /* Ensure proper scaling without distortion */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    transition: all 0.3s ease;
+}
+
+.result img:hover {
+    transform: scale(1.05); /* Enlarge image slightly on hover */
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4);
+}
+
+.result h3 {
+    margin-top: 15px;
+    font-size: 1.2rem;
+    color: #2575fc;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Add depth to text */
+}
+
+/* Footer Section */
+footer {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) { /* Tablet and smaller */
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    button {
+        padding: 10px 18px;
+        font-size: 0.9rem;
+    }
+
+    .result img {
+        width: 12rem;
+        height: 12rem;
+    }
+}
+
+@media (max-width: 480px) { /* Mobile */
+    .container {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    button {
+        padding: 8px 15px;
+        font-size: 0.8rem;
+    }
+
+    .result img {
+        width: 10rem;
+        height: 10rem;
+    }
+}
