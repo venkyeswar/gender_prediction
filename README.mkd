@@ -1,0 +1,52 @@
+
+
+# **Gender Recognition with CNN and VGG16 Transfer Learning**
+
+![Gender Recognition](website_image.png)
+
+## **Overview**
+This project implements a **Gender Recognition** system using Convolutional Neural Networks (CNNs) with three different models:
+
+1. **Normal CNN Model**  
+2. **Hyperparameter-Tuned CNN Model**  
+3. **VGG16 Transfer Learning Model**  
+
+The **VGG16 model** achieved the highest accuracy and was selected for deployment. The final model is deployed using **Django**, enabling users to upload images and receive gender predictions in real time.
+
+## **Model Performance**
+The models were trained on a face dataset, and the following accuracies were achieved:
+
+- **Normal CNN Model**: 97%
+- **Hyperparameter-Tuned CNN Model**: 96%
+- **VGG16 Transfer Learning Model**: 98%
+
+The **VGG16 model** was selected for deployment due to its superior performance.
+
+## **Installation**
+
+### **1. Clone the Repository**
+```bash
+git clone https://github.com/venkyeswar/gender-recognition.git
+cd gender-recognition
+```
+
+### **2. Install Dependencies**
+Ensure you have Python 3.x installed. Install the required dependencies with:
+
+```bash
+pip install -r requirements.txt
+```
+
+### **3. Set Up and Run the Django Project**
+Start the Django development server:
+
+```bash
+python manage.py runserver
+```
+
+The server will be available at `http://127.0.0.1:8000/`.
+
+## **Usage**
+1. Visit `http://127.0.0.1:8000/` in your browser.
+2. Upload an image of a face to predict the gender.
+3. The system will display the predicted gender (Male/Female).
